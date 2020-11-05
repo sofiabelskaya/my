@@ -1,4 +1,4 @@
-list = ['hello', 'world', 'you']
+list = ['hello', 'world', 'you', 'hello']
 
 
 def f(str):
@@ -11,7 +11,8 @@ def make_dict(list, f):
         if word not in dict_all:
             dict_all[word] = {}
             for other_word in list:
-                dict_all[word][other_word] = f(other_word)
+                if other_word not in dict_all[word]:
+                    dict_all[word][other_word] = f(other_word)
 
     return dict_all
 
