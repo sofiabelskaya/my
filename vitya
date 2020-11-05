@@ -1,0 +1,19 @@
+list = ['hello', 'world', 'you']
+
+
+def f(str):
+    return len(str)
+
+
+def make_dict(list, f):
+    dict_all = {}
+    for word in list:
+        if word not in dict_all:
+            dict_all[word] = {}
+            for other_word in list:
+                dict_all[word][other_word] = f(other_word)
+
+    return dict_all
+
+
+print(make_dict(list, f))
