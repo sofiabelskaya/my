@@ -1,20 +1,20 @@
-list = ['hello', 'world', 'you', 'hello']
+list1 = ['hello', 'world', 'you', 'hello']
 
 
-def f(str):
-    return len(str)
+def f(str1):
+    return len(str1)
 
 
-def make_dict(list, f):
+def make_dict(list1, f):
     dict_all = {}
-    for word in list:
+    for word in list1:
         if word not in dict_all:
             dict_all[word] = {}
-            for other_word in list:
+            for other_word in list1:
                 if other_word not in dict_all[word]:
                     dict_all[word][other_word] = f(other_word)
 
     return dict_all
 
 
-print(make_dict(list, f))
+print(make_dict(list1, f))
