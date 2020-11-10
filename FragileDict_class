@@ -2,7 +2,7 @@ import copy
 
 
 class FragileDict(object):
-    def __init__(self, other_dict={}):
+    def __init__(self, other_dict):
         """Constructor"""
         self._lock = True
         self._data = copy.deepcopy(other_dict)
@@ -10,28 +10,23 @@ class FragileDict(object):
     def __getitem__(self, key):
         # print("get")
         if self._lock:
-            val = copy.deepcopy(self._data[key])
+            val = dict.__getitem__(self._data, key)
         else:
-            if key not in self.back_copy:
-                # print("get")
-                self.back_copy[key] = copy.deepcopy(self._data[key])
-            elif key in self.new_copy:
-                if self.new_copy[key] != self._data[key]:
-                    self.back_copy[key] = copy.deepcopy(self._data[key])
-
+            self.back_copy[key] = copy.deepcopy(self._data[key])
             # print(self._data, self.back_copy)
             val = dict.__getitem__(self.back_copy, key)
         return val
 
     def __setitem__(self, key, val):
         if not self._lock:
+            # print("set")
             if key in self._data:
-                if key not in self.new_copy:
-                    self.new_copy[key] = copy.deepcopy(self._data[key])
-                # print("set",self._data, self.new_copy)
+                self.new_copy[key] = copy.deepcopy(self._data[key])
+                dict.__setitem__(self._data, key, val)
+                # print(self._data, self.new_copy)
             else:
                 self.new_keys.append(key)
-            dict.__setitem__(self._data, key, val)
+                dict.__setitem__(self._data, key, val)
         else:
             raise RuntimeError("Protected state")
 
@@ -40,10 +35,9 @@ class FragileDict(object):
         self.new_copy = {}
         self.new_keys = []
         self.back_copy = {}
-        return self
 
     def __exit__(self, type, value, traceback):
-        if type is not None and type is not KeyError:
+        if type is not None:
             # print(self._data, self.new_copy)
             for key in self.new_copy:
                 val = copy.deepcopy(self.new_copy[key])
@@ -66,6 +60,7 @@ class FragileDict(object):
             self.__delattr__('new_keys')
             self.__delattr__('back_copy')
             self._lock = True
+            return True
 
     def __contains__(self, item):
         return dict.__contains__(self._data, item)
