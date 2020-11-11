@@ -15,7 +15,6 @@ class FragileDict(object):
             elif key in self.new_copy:
                 if self.new_copy[key] != self._data[key]:
                     self.back_copy[key] = copy.deepcopy(self._data[key])
-
             val = dict.__getitem__(self.back_copy, key)
         return val
 
